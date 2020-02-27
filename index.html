@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="博客,blog,韬,黄武韬,武韬,web 前端,前段,html,js,css,nodejs,mongodb" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>韬的秘密基地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="博客,blog,韬,黄武韬,武韬,web 前端,前段,html,js,css,nodejs,mongodb">
+<meta property="og:type" content="website">
+<meta property="og:title" content="韬的秘密基地">
+<meta property="og:url" content="http://huangwutao.com/index.html">
+<meta property="og:site_name" content="韬的秘密基地">
+<meta property="og:description" content="博客,blog,韬,黄武韬,武韬,web 前端,前段,html,js,css,nodejs,mongodb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="韬的秘密基地">
+<meta name="twitter:description" content="博客,blog,韬,黄武韬,武韬,web 前端,前段,html,js,css,nodejs,mongodb">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="韬的秘密基地" rel="home">韬的秘密基地</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">心以启智，智以启财，财以启众，众以启贤，贤之有启，以王天下。</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main">
+  
+    <article id="post-高度自动铺满的非js实现" class="post-高度自动铺满的非js实现 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/10/09/高度自动铺满的非js实现/">高度自动铺满的非js实现</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/10/09/高度自动铺满的非js实现/" data-id="cj9zhb39h000be297zj8r3tgp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>html中div高度一直都是比较头疼的问题，尤其是在单页H5中。<br>往往客户需求是 一部分区域固定，另一部分内容单独滚动。</p>
+<p>如同这个页面<br><img src="../image/flex1.png" alt=""></p>
+<p>虚线之上是固定区域，虚线之下需要是单独的滚动区域。<br>按照传统做法要么是用table，要么就是用百分比：固定上下2部分百分比</p>
+<p>使用百分比的话，上部分在不同的机型上高度会不同导致样式走形或者和设计稿不符。</p>
+<p>像这种上固定，下填满的排版可以使用flex-flow来解决</p>
+<p>上代码：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"parent"</span>&gt;</span> //父节点</div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"up"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span>  //上部分</div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"down"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span> //下部分</div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span></div><div class="line">  .parent&#123;</div><div class="line">    display:flex;</div><div class="line">    height:100%; 这里父节点填满body</div><div class="line">    flex-flow: column; //上下分布.  row为左右分布</div><div class="line">  &#125;</div><div class="line">  .up&#123;</div><div class="line">    flex:0; 0代表不填充，保持自己的高度</div><div class="line">  &#125;</div><div class="line">  .down&#123;</div><div class="line">    flex:1; //1代表填充剩余空间</div><div class="line">    overflow:auto; //实现滚动 如果下部分会出现滚动一定要设置滚动 否则填充无效</div><div class="line">  &#125;</div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>iphone5上的效果：<br><img src="../image/flex1.png" alt=""></p>
+<p>iphone6p上的效果：<br><img src="../image/flex2.png" alt=""></p>
+<p>这下因为不同型号手机导致的尺寸不同的锅都丢给下部分背了</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/10/09/高度自动铺满的非js实现/">
+    <time datetime="2017-10-09T08:31:06.000Z" class="entry-date">
+        2017-10-09
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS3/">CSS3</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-xhr拦截及回调挂起方案" class="post-xhr拦截及回调挂起方案 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/09/26/xhr拦截及回调挂起方案/">xhr拦截及回调挂起方案</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/09/26/xhr拦截及回调挂起方案/" data-id="cj9zhb38g0004e2978omhhb17" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>公司app出现性能问题，跳转动画卡顿等问题。排查之后发现是在css动画过程中有dom渲染操作。<br>这些渲染操作都是基于xhr请求并拿到数据以后进行的操作。</p>
+<p>参考了一下<a href="https://github.com/wendux/Ajax-hook" target="_blank" rel="external">&lt;hookAjax&gt;</a>的解决方案，并在他的基础上加入了挂起功能。</p>
+<p>实现代码如下：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">! <span class="function"><span class="keyword">function</span>(<span class="params">ob</span>) </span>&#123;</div><div class="line">    ob.hookAjax = <span class="function"><span class="keyword">function</span>(<span class="params">funs</span>) </span>&#123;</div><div class="line">        <span class="comment">// 将原xhr备份为_ahrealxhr</span></div><div class="line">        <span class="built_in">window</span>._ahrealxhr = <span class="built_in">window</span>._ahrealxhr || XMLHttpRequest</div><div class="line">        <span class="comment">// 覆盖原有xhr</span></div><div class="line">        XMLHttpRequest = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="comment">// 创建一个xhr实例，利用for循环实例内的方法属性</span></div><div class="line">            <span class="comment">// 如果是方法就将方法放入hookfun中，如果是属性则设置相应的set，get</span></div><div class="line">            <span class="keyword">this</span>.xhr = <span class="keyword">new</span> <span class="built_in">window</span>._ahrealxhr;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> attr <span class="keyword">in</span> <span class="keyword">this</span>.xhr) &#123;</div><div class="line">                <span class="keyword">var</span> type = <span class="string">""</span>;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    type = <span class="keyword">typeof</span> <span class="keyword">this</span>.xhr[attr]</div><div class="line">                &#125; <span class="keyword">catch</span> (e) &#123;&#125;</div><div class="line">                <span class="keyword">if</span> (type === <span class="string">"function"</span>) &#123;</div><div class="line">                    <span class="keyword">this</span>[attr] = hookfun(attr);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="built_in">Object</span>.defineProperty(<span class="keyword">this</span>, attr, &#123;</div><div class="line">                        <span class="attr">get</span>: getFactory(attr),</div><div class="line">                        <span class="attr">set</span>: setFactory(attr)</div><div class="line">                    &#125;)</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getFactory</span>(<span class="params">attr</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.hasOwnProperty(attr + <span class="string">"_"</span>) ? <span class="keyword">this</span>[attr + <span class="string">"_"</span>] : <span class="keyword">this</span>.xhr[attr];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">setFactory</span>(<span class="params">attr</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> xhr = <span class="keyword">this</span>.xhr;</div><div class="line">                <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">                <span class="keyword">if</span> (attr.indexOf(<span class="string">"on"</span>) != <span class="number">0</span>) &#123;</div><div class="line">                    <span class="keyword">this</span>[attr + <span class="string">"_"</span>] = f;</div><div class="line">                    <span class="keyword">return</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (funs[attr]) &#123;</div><div class="line">                    <span class="comment">//如果调用了onload或者onreadystatechange属性 则获取该属性上的回调</span></div><div class="line">                    <span class="comment">//将回调设置为参数存入实例的对象中</span></div><div class="line">                    <span class="keyword">if</span> (attr == <span class="string">"onload"</span> || attr == <span class="string">"onreadystatechange"</span>) &#123;</div><div class="line">                        xhr[attr] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                            funs[attr](that, f.bind(xhr, <span class="built_in">arguments</span>))</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        xhr[attr] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                            funs[attr](that) || f.apply(xhr, <span class="built_in">arguments</span>);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    xhr[attr] = f;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">hookfun</span>(<span class="params">fun</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> args = [].slice.call(<span class="built_in">arguments</span>)</div><div class="line">                <span class="keyword">if</span> (funs[fun] &amp;&amp; funs[fun].call(<span class="keyword">this</span>, args, <span class="keyword">this</span>.xhr)) &#123;</div><div class="line">                    <span class="keyword">return</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.xhr[fun].apply(<span class="keyword">this</span>.xhr, args);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="built_in">window</span>._ahrealxhr;</div><div class="line">    &#125;</div><div class="line">    ob.unHookAjax = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="built_in">window</span>._ahrealxhr) XMLHttpRequest = <span class="built_in">window</span>._ahrealxhr;</div><div class="line">        <span class="built_in">window</span>._ahrealxhr = <span class="literal">undefined</span>;</div><div class="line">    &#125;</div><div class="line">&#125;(<span class="built_in">window</span>)</div></pre></td></tr></table></figure></p>
+<hr>
+<p>调用方法：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"peh.stop()"</span>&gt;</span>拦截挂起所有请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"fun2()"</span>&gt;</span>发起一个请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"peh.go()"</span>&gt;</span>运行挂起的请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="javascript"></span></div><div class="line">  <span class="keyword">var</span> pageEntryHook = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">this</span>.funs = []</div><div class="line">      <span class="keyword">this</span>.hook()</div><div class="line">      <span class="keyword">this</span>.switch = <span class="literal">true</span>;</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.hook = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">      hookAjax(&#123;</div><div class="line">          <span class="attr">onreadystatechange</span>: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, f</span>) </span>&#123;</div><div class="line">              <span class="keyword">if</span> (xhr.readyState == <span class="number">4</span>) &#123;</div><div class="line">                  <span class="built_in">console</span>.log(<span class="string">"onload"</span>)</div><div class="line">                  <span class="keyword">if</span> (that.switch) &#123;</div><div class="line">                      f()</div><div class="line">                  &#125; <span class="keyword">else</span> &#123;</div><div class="line">                      that.funs.push(f);</div><div class="line">                  &#125;</div><div class="line">              &#125;</div><div class="line">          &#125;,</div><div class="line">          <span class="attr">onload</span>: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, f</span>) </span>&#123;</div><div class="line">              <span class="built_in">console</span>.log(<span class="string">"onload"</span>)</div><div class="line">              <span class="keyword">if</span> (that.switch) &#123;</div><div class="line">                  f()</div><div class="line">              &#125; <span class="keyword">else</span> &#123;</div><div class="line">                  that.funs.push(f);</div><div class="line">              &#125;</div><div class="line">          &#125;</div><div class="line">      &#125;)</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.go = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">this</span>.switch = <span class="literal">true</span>;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> <span class="keyword">this</span>.funs) &#123;</div><div class="line">          <span class="keyword">this</span>.funs[i]()</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.stop = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.switch = <span class="literal">false</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">var</span> peh = <span class="keyword">new</span> pageEntryHook()</div><div class="line">  jishiqi = <span class="number">0</span>;</div><div class="line">  fun2 () &#123;</div><div class="line">    $.get().done(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">      alert(<span class="string">'这是第'</span> + ++jishiqi + <span class="string">'个请求'</span>);</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>测试一下！！！！</p>
+<script type="text/javascript">
+  ! function(ob) {
+    ob.hookAjax = function(funs) {
+        window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
+        XMLHttpRequest = function() {
+            this.xhr = new window._ahrealxhr;
+            for (var attr in this.xhr) {
+                var type = "";
+                try {
+                    type = typeof this.xhr[attr]
+                } catch (e) {}
+                if (type === "function") {
+                    this[attr] = hookfun(attr);
+                } else {
+                    Object.defineProperty(this, attr, {
+                        get: getFactory(attr),
+                        set: setFactory(attr)
+                    })
+                }
+            }
+        }
+
+        function getFactory(attr) {
+            return function() {
+                return this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
+            }
+        }
+
+        function setFactory(attr) {
+            return function(f) {
+                var xhr = this.xhr;
+                var that = this;
+                if (attr.indexOf("on") != 0) {
+                    this[attr + "_"] = f;
+                    return;
+                }
+                if (funs[attr]) {
+                    if (attr == "onload" || attr == "onreadystatechange") {
+                        xhr[attr] = function() {
+                            funs[attr](that, f.bind(xhr, arguments))
+                        }
+                    } else {
+                        xhr[attr] = function() {
+                            funs[attr](that) || f.apply(xhr, arguments);
+                        }
+                    }
+                } else {
+                    xhr[attr] = f;
+                }
+            }
+        }
+
+        function hookfun(fun) {
+            return function() {
+                var args = [].slice.call(arguments)
+                if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+                    return;
+                }
+                return this.xhr[fun].apply(this.xhr, args);
+            }
+        }
+        return window._ahrealxhr;
+    }
+    ob.unHookAjax = function() {
+        if (window._ahrealxhr) XMLHttpRequest = window._ahrealxhr;
+        window._ahrealxhr = undefined;
+    }
+}(window)
+</script>
+<button onclick="peh.stop()">拦截挂起所有请求</button>
+  <button onclick="fun2()">发起一个请求</button>
+  <button onclick="peh.go()">运行挂起的请求</button>
+  <script type="text/javascript">
+    var pageEntryHook = function() {
+        this.funs = []
+        this.hook()
+        this.switch = true;
+    }
+    pageEntryHook.prototype.hook = function() {
+        var that = this;
+        hookAjax({
+            onreadystatechange: function(xhr, f) {
+                if (xhr.readyState == 4) {
+                    console.log("onload")
+                    if (that.switch) {
+                        f()
+                    } else {
+                        that.funs.push(f);
+                    }
+                }
+            },
+            onload: function(xhr, f) {
+                console.log("onload")
+                if (that.switch) {
+                    f()
+                } else {
+                    that.funs.push(f);
+                }
+            }
+        })
+    }
+    pageEntryHook.prototype.go = function() {
+        this.switch = true;
+        for (var i in this.funs) {
+            this.funs[i]()
+        }
+    }
+    pageEntryHook.prototype.stop = function () {
+      this.switch = false;
+    }
+    var peh = new pageEntryHook()
+    jishiqi = 0;
+    function fun2 () {
+      $.get("api.open.baidu.com").done(function(e) {
+        alert('这是第' + ++jishiqi + '个请求');
+      });
+    }
+  </script>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/26/xhr拦截及回调挂起方案/">
+    <time datetime="2017-09-26T02:12:43.000Z" class="entry-date">
+        2017-09-26
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js/">js</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-生成器函数" class="post-生成器函数 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/09/04/生成器函数/">生成器函数</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/09/04/生成器函数/" data-id="cj9zhb38v0008e297x1inw98j" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="生成器函数介绍"><a href="#生成器函数介绍" class="headerlink" title="生成器函数介绍"></a>生成器函数介绍</h2><p>function* 这种声明方式(function关键字后跟一个星号）会定义一个生成器函数 (generator function)，它返回一个  Generator  对象。</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">name</span>(<span class="params">[param[, param[, ... param]]]</span>) </span>&#123; statements &#125;</div></pre></td></tr></table></figure>
+<p>name：函数名<br>param：参数<br>statements：普通js代码</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>利用生成器函数实现开关功能：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">Switch</span> (<span class="params">par</span>) </span>&#123;</div><div class="line">  <span class="keyword">let</span> index = par ? par : <span class="literal">true</span>;</div><div class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</div><div class="line">    <span class="keyword">yield</span> index = !index;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">let</span> test = Switch(<span class="literal">true</span>);</div><div class="line">test.next().value <span class="comment">//false;</span></div><div class="line">test.next().value <span class="comment">//true;</span></div><div class="line">test.next().value <span class="comment">//false;</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/04/生成器函数/">
+    <time datetime="2017-09-04T06:52:02.000Z" class="entry-date">
+        2017-09-04
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js/">js</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-css3选择器大全" class="post-css3选择器大全 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/08/29/css3选择器大全/">CSS3超实用选择器大全（持续更新中）</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/08/29/css3选择器大全/" data-id="cj9zhb37i0000e2979qq53h54" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="child系列与of-type系列的区别"><a href="#child系列与of-type系列的区别" class="headerlink" title="child系列与of-type系列的区别"></a>child系列与of-type系列的区别</h2><p><em>child系列不能约束元素类型</em><br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p:nth-child(2) //选择第2个元素 &amp;&amp; 第2个元素为p 才能选择到元素</div></pre></td></tr></table></figure></p>
+<p><em>of-type系列必须满足元素约束</em><br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p:nth-of-type(2) //首先列出所有的p然后选择第2个p元素</div></pre></td></tr></table></figure></p>
+<p><em>下文使用xxx来代替child和of-type</em></p>
+<hr>
+<h2 id="nth-xxx选择器"><a href="#nth-xxx选择器" class="headerlink" title="nth-xxx选择器"></a>nth-xxx选择器</h2><p><em>ie8及更早的版本不支持这个选择器</em></p>
+<p>:nth-xxx(n) 选择器匹配属于其父元素的第 N 个子元素。<br>n 可以是数字、关键词或公式。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">:nth-xxx(1) //匹配第一个</div><div class="line">:nth-xxx(n+2) //从第二个开始匹配</div><div class="line">:nth-xxx(2n+1) //匹配1,3,5,7,9等基数号</div><div class="line">:nth-xxx(2n) //匹配2,4,6,8,10等偶数号</div><div class="line">:nth-xxx(old) //匹配1,3,5,7,9等基数号</div><div class="line">:nth-xxx(even) //匹配2,4,6,8,10等偶数号</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="first-xxx，last-xxx选择器"><a href="#first-xxx，last-xxx选择器" class="headerlink" title="first-xxx，last-xxx选择器"></a>first-xxx，last-xxx选择器</h2><p><em>ie8及更早的版本不支持这个选择器</em></p>
+<p>:first-xxx 选择器匹配属于其父元素的第1个子元素。<br>:last-xxx 选择器匹配属于其父元素的最后一个子元素。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:first-xxx //匹配第一个</div><div class="line">:last-xxx //匹配最后一个</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="only-xxx选择器"><a href="#only-xxx选择器" class="headerlink" title="only-xxx选择器"></a>only-xxx选择器</h2><p><em>ie8及更早的版本不支持这个选择器</em></p>
+<p>p:only-child 选择器匹配父元素下只有1个元素 &amp;&amp; 这个元素是p元素<br>p:only-of-type 选择器匹配父元素下只有1个p元素</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>1<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>2<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>3<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>4<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>5<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">p:only-child&#123;</div><div class="line">  color:red;  // 1变红</div><div class="line">&#125;</div><div class="line">p:only-of-type&#123;</div><div class="line">  color:yellow; // 1,4变黄</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="not选择器"><a href="#not选择器" class="headerlink" title="not选择器"></a>not选择器</h2><p><em>ie8及更早的版本不支持这个选择器</em></p>
+<p>:not(selector) 选择器排除selector选中的元素</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>1<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>2<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>3<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">p</span>&gt;</span>4<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>5<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">p:not(:nth-child(1))&#123;</div><div class="line">  color:red; //2,3,4变红</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/08/29/css3选择器大全/">
+    <time datetime="2017-08-29T08:02:02.000Z" class="entry-date">
+        2017-08-29
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS3/">CSS3</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-文字截断以及滚动显示" class="post-文字截断以及滚动显示 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/06/14/文字截断以及滚动显示/">文字截断以及滚动显示</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/06/14/文字截断以及滚动显示/" data-id="cj9zhb3880003e297tmfipcdh" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <p>在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。<br>一些文案是无足轻重的，常常做成截断。也有一些是很重要的信息，可以做滚动。</p>
+<h2 id="文字截断"><a href="#文字截断" class="headerlink" title="文字截断"></a>文字截断</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;div style=<span class="string">"</span></div><div class="line">  text-overflow: ellipsis;</div><div class="line">  word-break: break-all;</div><div class="line">  white-space: nowrap;</div><div class="line">  overflow: hidden;</div><div class="line">  width: 100px;</div><div class="line">  border:1px solid black;"&gt;</div><div class="line">  在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</div><div class="line">&lt;/div&gt;</div></pre></td></tr></table></figure>
+<div style="text-overflow: ellipsis;word-break: break-all;white-space: nowrap;overflow: hidden;width:100px;border:1px solid black;">在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</div>
+
+<h2 id="文字滚动播放"><a href="#文字滚动播放" class="headerlink" title="文字滚动播放"></a>文字滚动播放</h2><h3 id="单向滚动"><a href="#单向滚动" class="headerlink" title="单向滚动"></a>单向滚动</h3><p>marquee标签的direction属性可以定义单向滚动的方向 默认从右往左<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;marquee style=<span class="string">"</span></div><div class="line">  width: 100px;</div><div class="line">  border:1px solid black;"</div><div class="line">  direction=left&gt;</div><div class="line">  在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</div><div class="line">&lt;/marquee&gt;</div></pre></td></tr></table></figure></p>
+<marquee style="width: 100px;border:1px solid black;" direction="left">在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</marquee>
+
+<h3 id="多样的滚动"><a href="#多样的滚动" class="headerlink" title="多样的滚动"></a>多样的滚动</h3><p>marquee标签的behavior属性可以定义滚动的方式：<br>alternate: 来回滚动<br>scroll: 绕圈滚动 (默认)<br>slide: 单边滚动<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;marquee style=<span class="string">"</span></div><div class="line">  width: 100px;</div><div class="line">  border:1px solid black;"</div><div class="line">  behavior=alternate&gt;</div><div class="line">  在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</div><div class="line">&lt;/marquee&gt;</div></pre></td></tr></table></figure></p>
+<marquee style="width: 100px;border:1px solid black;" behavior="alternate">在做一些商城及介绍页面的时候，经常会遇见文案过长，但是设计给到的显示区域有限的情况。</marquee>
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/06/14/文字截断以及滚动显示/">
+    <time datetime="2017-06-14T06:52:02.000Z" class="entry-date">
+        2017-06-14
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML5/">HTML5</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-那些冷门却实用的H5标签" class="post-那些冷门却实用的H5标签 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/06/10/那些冷门却实用的H5标签/">那些冷门却实用的H5标签</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/06/10/那些冷门却实用的H5标签/" data-id="cj9zhb3920009e297es9hr779" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="1-切割图片的-lt-area-gt-标签"><a href="#1-切割图片的-lt-area-gt-标签" class="headerlink" title="1.切割图片的&lt;area&gt;标签"></a>1.切割图片的&lt;area&gt;标签</h2><p>HTML <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/area" target="_blank" rel="external"> &lt;area&gt; </a> 元素 在图片上定义一个热点区域</p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;map name=<span class="string">"primary"</span>&gt;</div><div class="line">  &lt;area shape=<span class="string">"circle"</span> coords=<span class="string">"75,75,75"</span> onclick=<span class="string">"alert('这是左边')"</span> alt=<span class="string">"Click to go Left"</span>&gt;</div><div class="line">  &lt;area shape=<span class="string">"circle"</span> coords=<span class="string">"275,75,75"</span> onclick=<span class="string">"alert('这是右边')"</span> alt=<span class="string">"Click to go Right"</span>&gt;</div><div class="line">&lt;/map&gt;</div><div class="line">&lt;img usemap=<span class="string">"#primary"</span> src=<span class="string">"http://placehold.it/350x150"</span> alt=<span class="string">"350 x 150 pic"</span>&gt;</div></pre></td></tr></table></figure>
+<p><map name="primary"><area shape="circle" onclick="alert('这是左边')" coords="75,75,75" alt="Click to go Left"><area shape="circle" coords="275,75,75" onclick="alert('这是右边')" alt="Click to go Right"></map><img usemap="#primary" src="http://placehold.it/350x150" alt="350 x 150 pic"></p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><h4 id="coords"><a href="#coords" class="headerlink" title="coords"></a>coords</h4><p>给热点区域设定具体的坐标值。这个值的数值和意义取决于这个值所描述的形状属性.。对于矩形或长方形, 这个coords 值为两个X,Y对：左上、右下。 对于圆形, 这个值是 x,y,r ，这里的 x,y 是一对确定圆的中心的坐标而 r 则表示的是半径值.。对于多边和多边形，这个值是用x,y对表示的多边形的每一个点：x1,y1,x2,y2,x3,y3,等等。</p>
+<h4 id="shape"><a href="#shape" class="headerlink" title="shape"></a>shape</h4><p>该属性用来定义热点的形状，HTML 5和HTML 4的规范定义了rect（矩形区域）、circle（圆形区域）、poly（多边形）。 </p>
+<h2 id="2-给中国人创造的标签-lt-ruby-gt"><a href="#2-给中国人创造的标签-lt-ruby-gt" class="headerlink" title="2.给中国人创造的标签&lt;ruby&gt;"></a>2.给中国人创造的标签&lt;ruby&gt;</h2><p>HTML <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/ruby" target="_blank" rel="external">&lt;ruby&gt;</a> 元素 被用来展示东亚文字注音或字符注释。</p>
+<h3 id="例子-1"><a href="#例子-1" class="headerlink" title="例子"></a>例子</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;ruby&gt;</div><div class="line">  明</div><div class="line">  &lt;rt&gt;ming&lt;/rt&gt;</div><div class="line">  日</div><div class="line">  &lt;rt&gt;ri&lt;/rt&gt;</div><div class="line">&lt;/ruby&gt;</div></pre></td></tr></table></figure>
+<p><ruby>明<rt>ming</rt>日<rt>ri</rt></ruby></p>
+<h2 id="3-不需要js的计算器-lt-output-gt"><a href="#3-不需要js的计算器-lt-output-gt" class="headerlink" title="3.不需要js的计算器&lt;output&gt;"></a>3.不需要js的计算器&lt;output&gt;</h2><p>HTML <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/output" target="_blank" rel="external">&lt;output&gt;</a>标签定义一个用户的操作或者计算的结果。</p>
+<h3 id="例子-2"><a href="#例子-2" class="headerlink" title="例子"></a>例子</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;form oninput=<span class="string">"result.value=parseInt(a.value)+parseInt(b.value)"</span>&gt;</div><div class="line">    &lt;input <span class="built_in">type</span>=<span class="string">"range"</span> name=<span class="string">"b"</span> value=<span class="string">"50"</span> /&gt; +</div><div class="line">    &lt;input <span class="built_in">type</span>=<span class="string">"number"</span> name=<span class="string">"a"</span> value=<span class="string">"10"</span> /&gt; =</div><div class="line">    &lt;output name=<span class="string">"result"</span>&gt;&lt;/output&gt;</div><div class="line">&lt;/form&gt;</div></pre></td></tr></table></figure>
+<form oninput="result.value=parseInt(a.value)+parseInt(b.value)"><input type="range" name="b" value="50"> +<input type="number" name="a" value="10"> =<output name="result"></output></form>
+
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/06/10/那些冷门却实用的H5标签/">
+    <time datetime="2017-06-10T08:31:06.000Z" class="entry-date">
+        2017-06-10
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML5/">HTML5</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-hexo博客搭建" class="post-hexo博客搭建 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/06/07/hexo博客搭建/">MAC下hexo博客搭建(非git)</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/06/07/hexo博客搭建/" data-id="cj9zhb37y0001e2971bdbg3lp" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h3 id="1-环境安装"><a href="#1-环境安装" class="headerlink" title="1.环境安装"></a>1.环境安装</h3><p>安装 Hexo 相当简单。然而在安装前，您必须检查电脑中是否已安装NodeJS：</p>
+<ul>
+<li><a href="http://nodejs.org/" target="_blank" rel="external">node.js</a></li>
+</ul>
+<p>如果已经安装了nodejs直接在命令行键入以下命令安装hexo:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo npm install -g hexo-cli</div></pre></td></tr></table></figure>
+<p>命令的意思是全局安装hexo</p>
+<h3 id="2-创建博客"><a href="#2-创建博客" class="headerlink" title="2.创建博客"></a>2.创建博客</h3><p>创建一个文件夹用来存放博客的本地文件，然后在文件夹目录下键入命令行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ hexo init &lt;folder&gt;</div><div class="line">//&lt;folder&gt;为你该次创建的博客文件夹名，命令会自动创建一个文件夹，里面包含了博客的所有内容</div><div class="line">$ <span class="built_in">cd</span> &lt;folder&gt;</div><div class="line">$ npm install</div></pre></td></tr></table></figure>
+<p>新建完成后，目录如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.</div><div class="line">├── _config.yml   //网站的配置信息</div><div class="line">├── package.json //应用程序的信息</div><div class="line">├── scaffolds  //模版文件夹</div><div class="line">├── <span class="built_in">source</span>   //页面资源存放文件夹</div><div class="line">|   ├── _drafts</div><div class="line">|   └── _posts</div><div class="line">└── themes   //主题文件夹</div></pre></td></tr></table></figure></p>
+<p>网站及应用程序等配置信息详见：<a href="https://hexo.io/zh-cn/docs/configuration.html" target="_blank" rel="external">hexo</a></p>
+<h3 id="3-创建文章及开启本地服务"><a href="#3-创建文章及开启本地服务" class="headerlink" title="3.创建文章及开启本地服务"></a>3.创建文章及开启本地服务</h3><p>目录建成后，可以使用命令行新建一篇文章<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new [_layout] &lt;title&gt;</div></pre></td></tr></table></figure></p>
+<p>新建一篇文章。如果没有设置 layout 的话，默认使用 _config.yml 中的 default_layout 参数代替。如果标题包含空格的话，请使用引号括起来。</p>
+<p>新建的文件可以在 /source/[_layout] 目录下找到</p>
+<p>如果想在本地预览自己的文章，可以在命令行键入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure></p>
+<p>该命令会开启一个localhost:4000的服务<br>在浏览器输入该地址则可以浏览自己的博客啦</p>
+<h3 id="4-打包及发布"><a href="#4-打包及发布" class="headerlink" title="4.打包及发布"></a>4.打包及发布</h3><p>可以输入以下命令将博客打包成静态文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo g</div></pre></td></tr></table></figure></p>
+<p>该命令会在根目录创建一个public的文件夹，里面的内容就是博客的静态文件</p>
+<p>如果自己买了阿里云或者其他服务器，可以将public复制到自己的服务器上，这样就算部署完了。<br>也可以使用hexo提供的发布工具<br>找到 _config.yml 配置文件<br>修改deploy项如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">  <span class="built_in">type</span>: rsync</div><div class="line">  host: 112.74.xx.xxx</div><div class="line">  user: 你服务器的用户名</div><div class="line">  root: 服务器存放博客的文件夹路径</div><div class="line">  port: [port] //默认端口 或者 可以改成自己的ssh端口</div><div class="line">  delete: [<span class="literal">true</span>|<span class="literal">false</span>]</div><div class="line">  verbose: [<span class="literal">true</span>|<span class="literal">false</span>]</div><div class="line">  ignore_errors: [<span class="literal">true</span>|<span class="literal">false</span>]</div></pre></td></tr></table></figure></p>
+<p>然后在根目录命令行键入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo npm install hexo-deployer-rsync --save</div></pre></td></tr></table></figure></p>
+<p>安装 <a href="https://github.com/hexojs/hexo-deployer-rsync" target="_blank" rel="external">hexo-deployer-rsync</a>。</p>
+<p>然后在命令行键入：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo d</div></pre></td></tr></table></figure></p>
+<p>即可自动将文件上传到自己的服务器了!</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/06/07/hexo博客搭建/">
+    <time datetime="2017-06-07T13:14:55.000Z" class="entry-date">
+        2017-06-07
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/">hexo</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+    <article id="post-微信h5同层播放m3u8视频事件汇总" class="post-微信h5同层播放m3u8视频事件汇总 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title">
+      <a class="article-title" href="/2017/06/07/微信h5同层播放m3u8视频事件汇总/">微信h5同层播放m3u8视频事件汇总</a>
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/06/07/微信h5同层播放m3u8视频事件汇总/" data-id="cj9zhb38o0005e297wnqxd36b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="微信端h5直播的项目中遇到的坑"><a href="#微信端h5直播的项目中遇到的坑" class="headerlink" title="微信端h5直播的项目中遇到的坑"></a>微信端h5直播的项目中遇到的坑</h2><h3 id="播放m3u8格式视频"><a href="#播放m3u8格式视频" class="headerlink" title="播放m3u8格式视频"></a>播放m3u8格式视频</h3><p>如何在微信端h5页面中播放m3u8格式？<br>代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;video&gt;</div><div class="line">  &lt;<span class="built_in">source</span> src=<span class="string">"xxxxxx/10234.m3u8"</span> <span class="built_in">type</span>=<span class="string">"application/vnd.apple.mpegurl"</span>&gt;</div><div class="line">  &lt;p class=<span class="string">"warning"</span>&gt;Your browser does not support HTML5 video.&lt;/p&gt;</div><div class="line">&lt;/video&gt;</div></pre></td></tr></table></figure>
+<p>在source标签中加入 type=”application/vnd.apple.mpegurl” 即可</p>
+<h3 id="视频全屏问题"><a href="#视频全屏问题" class="headerlink" title="视频全屏问题"></a>视频全屏问题</h3><p>想营造和原生app一样的界面，视频全屏兼容性是个大问题<br>ios解决办法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;video playsinline webkit-playsinline&gt;&lt;/video&gt;</div></pre></td></tr></table></figure>
+<p>安卓解决办法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;video x5-video-player-type=<span class="string">"h5"</span>&gt;&lt;/video&gt;</div></pre></td></tr></table></figure>
+<p><a href="https://x5.tencent.com/tbs/guide/video.html" target="_blank" rel="external">h5视频同层播放规范</a></p>
+<h3 id="视频播放事件问题"><a href="#视频播放事件问题" class="headerlink" title="视频播放事件问题"></a>视频播放事件问题</h3><p>安卓：loadedmetadata &gt; canplay &gt; canplaythrough &gt; play &gt; playing &gt; timeupdate &gt; suspend (suspend是因为安卓同层播放控件关闭原视频)</p>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/06/07/微信h5同层播放m3u8视频事件汇总/">
+    <time datetime="2017-06-07T11:12:43.000Z" class="entry-date">
+        2017-06-07
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/视频播放/">视频播放</a></li></ul>
+
+    </footer>
+</article>
+
+
+
+
+
+
+  
+  
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Music</h3>
+    <section class="music-player">
+      <main class="music-player--main">
+        <div class="music-player--progress">
+          <progress class="progress--progress-bar" value="0" max="100"></progress>
+          <div class="progress--time progress--time__start">00:00</div>
+          <div class="progress--time progress--time__end">00:00</div>
+        </div>
+        <div class="music-player--controls">
+          <i class="fa fa-pause controls--play-button" data-music="play"></i>
+          
+          <div class="song-info">
+            <div class="song-info--title"></div>
+            <div class="song-info--artist"></div>
+          </div>
+          <div class="controls--actions">
+            <i class="fa fa-backward actions--back"></i>
+            <i class="fa fa-forward actions--forward"></i>
+          </div>
+        </div>
+      </main>
+    </section>
+  </aside>
+
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/09/高度自动铺满的非js实现/">高度自动铺满的非js实现</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/26/xhr拦截及回调挂起方案/">xhr拦截及回调挂起方案</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/04/生成器函数/">生成器函数</a>
+          </li>
+        
+          <li>
+            <a href="/2017/08/29/css3选择器大全/">CSS3超实用选择器大全（持续更新中）</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/14/文字截断以及滚动显示/">文字截断以及滚动显示</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS3/">CSS3</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML5/">HTML5</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频播放/">视频播放</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CSS3/" style="font-size: 20px;">CSS3</a> <a href="/tags/HTML5/" style="font-size: 20px;">HTML5</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js/" style="font-size: 20px;">js</a> <a href="/tags/视频播放/" style="font-size: 10px;">视频播放</a>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">兼容性检查</h3>
+    <div class="widget-content inspect">
+      
+    </div>
+    <script>
+            function myConsole(bol,msg,link){
+                let inspect = document.querySelector(".inspect");
+                var div = document.createElement("div");
+                div.style.marginTop = "5px";
+                var p = document.createElement("div");
+                p.innerHTML = msg;
+                p.className = bol ? "blue" : "red";
+                inspect.appendChild(div);
+                div.appendChild(p);
+                p.addEventListener("click",function(){
+                    window.open(link); 
+                });
+            }
+      window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+      myConsole('fetch' in window, "Fetch-获取","https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API");
+            myConsole('serviceWorker' in navigator, "ServiceWorker-服务进程","https://developer.mozilla.org/zh-CN/docs/Web/API/ServiceWorker");
+            myConsole('SharedWorker' in window, "SharedWorker-共享进程","https://developer.mozilla.org/zh-CN/docs/Web/API/SharedWorker");
+            myConsole('Worker' in window , "Worker-进程" ,"https://developer.mozilla.org/zh-CN/docs/Web/API/Worker");
+            myConsole('Crypto' in window , "Crypto-加密","https://developer.mozilla.org/zh-CN/docs/Web/API/Crypto");
+            myConsole(typeof(Map) == "function" , "Map","https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map");
+            myConsole('AudioContext' in window || "webkitAudioContext" in window, "AudioContext-音频环境" ,"https://developer.mozilla.org/zh-CN/docs/Web/API/AudioContext");
+            myConsole('Blob' in window , "Blob-二进制大数据","https://developer.mozilla.org/zh-CN/docs/Web/API/Blob");
+            myConsole('MediaStream' in window ,"MediaStream-媒体流", "https://developer.mozilla.org/zh-CN/docs/Web/API/MediaStream");
+            myConsole("Notification" in window ,"Notification-桌面通知", "https://developer.mozilla.org/zh-CN/docs/Web/API/Notification");
+            myConsole('Promise' in window ,"Promise-容器", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise");
+            myConsole('ondeviceproximity' in window ,"DeviceProximityEvent-设备接近传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceProximityEvent");
+            myConsole('ondevicelight' in window ,"DeviceLightEvent-环境光传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceLightEvent");
+            myConsole('ondevicemotion' in window ,"DeviceMotionEvent-设备运动传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceMotionEvent");
+            myConsole('ondeviceorientation' in window ,"DeviceOrientationEvent-设备方向传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceOrientationEvent");
+            myConsole('CustomEvent' in window ,"CustomEvent-自定义事件", "https://developer.mozilla.org/zh-CN/docs/Web/API/CustomEvent");
+            myConsole('GestureEvent' in window ,"GestureEvent-多点触控", "https://developer.mozilla.org/zh-CN/docs/Web/API/GestureEvent");
+            myConsole('Performance' in window ,"Performance-性能", "https://developer.mozilla.org/zh-CN/docs/Web/API/Performance");
+            myConsole('Storage' in window ,"Storage-本地存储", "https://developer.mozilla.org/zh-CN/docs/Web/API/Storage");
+            myConsole('Proxy' in window ,"Proxy-自定义行为", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy");
+      myConsole(window.indexedDB,"indexedDB-前端数据库", "https://developer.mozilla.org/zh-CN/docs/Web/API/IndexedDB_API/Using_IndexedDB");
+            myConsole('TextDecoder' in window,"TextDecoder-文本解码器", "https://developer.mozilla.org/zh-CN/docs/Web/API/TextDecoder");
+            myConsole('TextEncoder' in window,"TextEncoder-文本编码器", "https://developer.mozilla.org/zh-CN/docs/Web/API/TextEncoder");
+            myConsole('createImageBitmap' in window,"createImageBitmap-创建位图", "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap");
+            myConsole(typeof(Symbol) == "function","Symbol-第七种数据类型", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol");
+            myConsole('Animation' in window,"Animation-css动画接口", "https://developer.mozilla.org/zh-CN/docs/Web/API/Animation");
+    </script>
+  </aside>
+
+  
+    <aside class="widget">
+  <style>
+    .aqwright{
+      border-bottom: 1px dashed;
+      margin: 10px 0px;
+    }
+    .aqwright>div:first-of-type{
+          display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    }
+  </style>
+  <h3 class="widget-title">留言</h3>
+  <div class="widget-content">
+    <div>
+        <p><input type="text" class="msgname" placeholder="您的姓名"></p>
+        <p><textarea class="msg" style="margin: 0px; width: 100%; height: 206px;"></textarea></p>
+        <p><input type="button" class="msgbtn" value="确定"></p>
+    </div>
+    <div>
+      <div class="xly"></div>
+    </div>
+    <script>
+      document.querySelector(".msgbtn").addEventListener("click", function() {
+        var name = document.querySelector(".msgname").value;
+        var msg = document.querySelector(".msg").value;
+        if (msg == "" || msg == undefined) {
+            alert("请输入您的留言");
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                var XMLHttpReq = xhr;
+                if (XMLHttpReq.readyState == 4) {
+                    if (XMLHttpReq.status == 200) {
+                        var text = XMLHttpReq.response;
+                        if (text == "2") {
+                            alert("请输入您的留言");
+                        } else if (text == "3") {
+                            console.log("录入成功");
+                            loadmsg();
+                            document.querySelector(".name").value = "";
+                            document.querySelector(".msg").value = "";
+                        } else {
+                            var cha = parseInt(text / 1000);
+                            alert("请在" + cha + "秒后再留言");
+                        }
+                    }
+                }
+            };
+            xhr.open("POST", "http://www.huangwutao.com/msg", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.responseType = "text";
+            xhr.send("name=" + name + "&msg=" + msg);
+        }
+    });
+    function loadmsg() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var data = JSON.parse(xhr.response);
+                    var thehtml = "";
+                    for (var i = 0; i < data.length; i++) {
+                        thehtml = thehtml + '<div class="aqwright"><div>' + data[i].name + '<span>' + data[i].time + '</span></div><div class="ansright_cont">' + data[i].msg + '</div></div>';
+                    }
+                    document.querySelector(".xly").innerHTML = thehtml;
+                }
+            }
+        };
+        xhr.open("POST", "http://www.huangwutao.com/readmsg", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.responseType = "json";
+        xhr.send();
+    }
+    loadmsg();
+    </script>
+  </div>
+</aside>
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2017 黄武韬
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<canvas id="sakura" width="310" height="600"></canvas>
+
+<script src="/js/Taoja_new.js"></script>
+        <script type="text/javascript">
+            var tao = new Tao({
+                load : "/js/background.png",
+                name : "myblog_bg",
+                path : 4
+            });
+            tao.result = function(e){
+                if(e.decode){
+                    var js = document.createElement("script");
+                    js.type = "text/javascript";
+                    js.innerHTML = e.dv.get("bg.js").toString();
+                    document.body.appendChild(js);
+                    go(e.dv);
+                    document.body.removeChild(js);
+                }
+            }
+        </script>
+
+  </div>
+</body>
+</html>

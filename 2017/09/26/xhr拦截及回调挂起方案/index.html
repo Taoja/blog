@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="博客,blog,韬,黄武韬,武韬,web 前端,前段,html,js,css,nodejs,mongodb" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>xhr拦截及回调挂起方案 | 韬的秘密基地</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="原因公司app出现性能问题，跳转动画卡顿等问题。排查之后发现是在css动画过程中有dom渲染操作。这些渲染操作都是基于xhr请求并拿到数据以后进行的操作。 参考了一下&amp;lt;hookAjax&amp;gt;的解决方案，并在他的基础上加入了挂起功能。 实现代码如下：123456789101112131415161718192021222324252627282930313233343536373839404">
+<meta name="keywords" content="js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xhr拦截及回调挂起方案">
+<meta property="og:url" content="http://huangwutao.com/2017/09/26/xhr拦截及回调挂起方案/index.html">
+<meta property="og:site_name" content="韬的秘密基地">
+<meta property="og:description" content="原因公司app出现性能问题，跳转动画卡顿等问题。排查之后发现是在css动画过程中有dom渲染操作。这些渲染操作都是基于xhr请求并拿到数据以后进行的操作。 参考了一下&amp;lt;hookAjax&amp;gt;的解决方案，并在他的基础上加入了挂起功能。 实现代码如下：123456789101112131415161718192021222324252627282930313233343536373839404">
+<meta property="og:updated_time" content="2017-09-26T07:54:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="xhr拦截及回调挂起方案">
+<meta name="twitter:description" content="原因公司app出现性能问题，跳转动画卡顿等问题。排查之后发现是在css动画过程中有dom渲染操作。这些渲染操作都是基于xhr请求并拿到数据以后进行的操作。 参考了一下&amp;lt;hookAjax&amp;gt;的解决方案，并在他的基础上加入了挂起功能。 实现代码如下：123456789101112131415161718192021222324252627282930313233343536373839404">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+</head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="韬的秘密基地" rel="home">韬的秘密基地</a>
+      </h1>
+      
+        <h2 class="site-description">
+          <a href="/" id="subtitle">心以启智，智以启财，财以启众，众以启贤，贤之有启，以王天下。</a>
+        </h2>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-xhr拦截及回调挂起方案" class="post-xhr拦截及回调挂起方案 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      xhr拦截及回调挂起方案
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="http://huangwutao.com/2017/09/26/xhr拦截及回调挂起方案/" data-id="cj9zhb38g0004e2978omhhb17" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>公司app出现性能问题，跳转动画卡顿等问题。排查之后发现是在css动画过程中有dom渲染操作。<br>这些渲染操作都是基于xhr请求并拿到数据以后进行的操作。</p>
+<p>参考了一下<a href="https://github.com/wendux/Ajax-hook" target="_blank" rel="external">&lt;hookAjax&gt;</a>的解决方案，并在他的基础上加入了挂起功能。</p>
+<p>实现代码如下：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">! <span class="function"><span class="keyword">function</span>(<span class="params">ob</span>) </span>&#123;</div><div class="line">    ob.hookAjax = <span class="function"><span class="keyword">function</span>(<span class="params">funs</span>) </span>&#123;</div><div class="line">        <span class="comment">// 将原xhr备份为_ahrealxhr</span></div><div class="line">        <span class="built_in">window</span>._ahrealxhr = <span class="built_in">window</span>._ahrealxhr || XMLHttpRequest</div><div class="line">        <span class="comment">// 覆盖原有xhr</span></div><div class="line">        XMLHttpRequest = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">            <span class="comment">// 创建一个xhr实例，利用for循环实例内的方法属性</span></div><div class="line">            <span class="comment">// 如果是方法就将方法放入hookfun中，如果是属性则设置相应的set，get</span></div><div class="line">            <span class="keyword">this</span>.xhr = <span class="keyword">new</span> <span class="built_in">window</span>._ahrealxhr;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> attr <span class="keyword">in</span> <span class="keyword">this</span>.xhr) &#123;</div><div class="line">                <span class="keyword">var</span> type = <span class="string">""</span>;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    type = <span class="keyword">typeof</span> <span class="keyword">this</span>.xhr[attr]</div><div class="line">                &#125; <span class="keyword">catch</span> (e) &#123;&#125;</div><div class="line">                <span class="keyword">if</span> (type === <span class="string">"function"</span>) &#123;</div><div class="line">                    <span class="keyword">this</span>[attr] = hookfun(attr);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="built_in">Object</span>.defineProperty(<span class="keyword">this</span>, attr, &#123;</div><div class="line">                        <span class="attr">get</span>: getFactory(attr),</div><div class="line">                        <span class="attr">set</span>: setFactory(attr)</div><div class="line">                    &#125;)</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">getFactory</span>(<span class="params">attr</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.hasOwnProperty(attr + <span class="string">"_"</span>) ? <span class="keyword">this</span>[attr + <span class="string">"_"</span>] : <span class="keyword">this</span>.xhr[attr];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">setFactory</span>(<span class="params">attr</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> xhr = <span class="keyword">this</span>.xhr;</div><div class="line">                <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">                <span class="keyword">if</span> (attr.indexOf(<span class="string">"on"</span>) != <span class="number">0</span>) &#123;</div><div class="line">                    <span class="keyword">this</span>[attr + <span class="string">"_"</span>] = f;</div><div class="line">                    <span class="keyword">return</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (funs[attr]) &#123;</div><div class="line">                    <span class="comment">//如果调用了onload或者onreadystatechange属性 则获取该属性上的回调</span></div><div class="line">                    <span class="comment">//将回调设置为参数存入实例的对象中</span></div><div class="line">                    <span class="keyword">if</span> (attr == <span class="string">"onload"</span> || attr == <span class="string">"onreadystatechange"</span>) &#123;</div><div class="line">                        xhr[attr] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                            funs[attr](that, f.bind(xhr, <span class="built_in">arguments</span>))</div><div class="line">                        &#125;</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        xhr[attr] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                            funs[attr](that) || f.apply(xhr, <span class="built_in">arguments</span>);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    xhr[attr] = f;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">function</span> <span class="title">hookfun</span>(<span class="params">fun</span>) </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">                <span class="keyword">var</span> args = [].slice.call(<span class="built_in">arguments</span>)</div><div class="line">                <span class="keyword">if</span> (funs[fun] &amp;&amp; funs[fun].call(<span class="keyword">this</span>, args, <span class="keyword">this</span>.xhr)) &#123;</div><div class="line">                    <span class="keyword">return</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">this</span>.xhr[fun].apply(<span class="keyword">this</span>.xhr, args);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="built_in">window</span>._ahrealxhr;</div><div class="line">    &#125;</div><div class="line">    ob.unHookAjax = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="built_in">window</span>._ahrealxhr) XMLHttpRequest = <span class="built_in">window</span>._ahrealxhr;</div><div class="line">        <span class="built_in">window</span>._ahrealxhr = <span class="literal">undefined</span>;</div><div class="line">    &#125;</div><div class="line">&#125;(<span class="built_in">window</span>)</div></pre></td></tr></table></figure></p>
+<hr>
+<p>调用方法：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"peh.stop()"</span>&gt;</span>拦截挂起所有请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"fun2()"</span>&gt;</span>发起一个请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onclick</span>=<span class="string">"peh.go()"</span>&gt;</span>运行挂起的请求<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span><span class="javascript"></span></div><div class="line">  <span class="keyword">var</span> pageEntryHook = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">this</span>.funs = []</div><div class="line">      <span class="keyword">this</span>.hook()</div><div class="line">      <span class="keyword">this</span>.switch = <span class="literal">true</span>;</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.hook = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">var</span> that = <span class="keyword">this</span>;</div><div class="line">      hookAjax(&#123;</div><div class="line">          <span class="attr">onreadystatechange</span>: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, f</span>) </span>&#123;</div><div class="line">              <span class="keyword">if</span> (xhr.readyState == <span class="number">4</span>) &#123;</div><div class="line">                  <span class="built_in">console</span>.log(<span class="string">"onload"</span>)</div><div class="line">                  <span class="keyword">if</span> (that.switch) &#123;</div><div class="line">                      f()</div><div class="line">                  &#125; <span class="keyword">else</span> &#123;</div><div class="line">                      that.funs.push(f);</div><div class="line">                  &#125;</div><div class="line">              &#125;</div><div class="line">          &#125;,</div><div class="line">          <span class="attr">onload</span>: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, f</span>) </span>&#123;</div><div class="line">              <span class="built_in">console</span>.log(<span class="string">"onload"</span>)</div><div class="line">              <span class="keyword">if</span> (that.switch) &#123;</div><div class="line">                  f()</div><div class="line">              &#125; <span class="keyword">else</span> &#123;</div><div class="line">                  that.funs.push(f);</div><div class="line">              &#125;</div><div class="line">          &#125;</div><div class="line">      &#125;)</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.go = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">this</span>.switch = <span class="literal">true</span>;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> <span class="keyword">this</span>.funs) &#123;</div><div class="line">          <span class="keyword">this</span>.funs[i]()</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">  pageEntryHook.prototype.stop = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.switch = <span class="literal">false</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">var</span> peh = <span class="keyword">new</span> pageEntryHook()</div><div class="line">  jishiqi = <span class="number">0</span>;</div><div class="line">  fun2 () &#123;</div><div class="line">    $.get().done(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">      alert(<span class="string">'这是第'</span> + ++jishiqi + <span class="string">'个请求'</span>);</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>测试一下！！！！</p>
+<script type="text/javascript">
+  ! function(ob) {
+    ob.hookAjax = function(funs) {
+        window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
+        XMLHttpRequest = function() {
+            this.xhr = new window._ahrealxhr;
+            for (var attr in this.xhr) {
+                var type = "";
+                try {
+                    type = typeof this.xhr[attr]
+                } catch (e) {}
+                if (type === "function") {
+                    this[attr] = hookfun(attr);
+                } else {
+                    Object.defineProperty(this, attr, {
+                        get: getFactory(attr),
+                        set: setFactory(attr)
+                    })
+                }
+            }
+        }
+
+        function getFactory(attr) {
+            return function() {
+                return this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
+            }
+        }
+
+        function setFactory(attr) {
+            return function(f) {
+                var xhr = this.xhr;
+                var that = this;
+                if (attr.indexOf("on") != 0) {
+                    this[attr + "_"] = f;
+                    return;
+                }
+                if (funs[attr]) {
+                    if (attr == "onload" || attr == "onreadystatechange") {
+                        xhr[attr] = function() {
+                            funs[attr](that, f.bind(xhr, arguments))
+                        }
+                    } else {
+                        xhr[attr] = function() {
+                            funs[attr](that) || f.apply(xhr, arguments);
+                        }
+                    }
+                } else {
+                    xhr[attr] = f;
+                }
+            }
+        }
+
+        function hookfun(fun) {
+            return function() {
+                var args = [].slice.call(arguments)
+                if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+                    return;
+                }
+                return this.xhr[fun].apply(this.xhr, args);
+            }
+        }
+        return window._ahrealxhr;
+    }
+    ob.unHookAjax = function() {
+        if (window._ahrealxhr) XMLHttpRequest = window._ahrealxhr;
+        window._ahrealxhr = undefined;
+    }
+}(window)
+</script>
+<button onclick="peh.stop()">拦截挂起所有请求</button>
+  <button onclick="fun2()">发起一个请求</button>
+  <button onclick="peh.go()">运行挂起的请求</button>
+  <script type="text/javascript">
+    var pageEntryHook = function() {
+        this.funs = []
+        this.hook()
+        this.switch = true;
+    }
+    pageEntryHook.prototype.hook = function() {
+        var that = this;
+        hookAjax({
+            onreadystatechange: function(xhr, f) {
+                if (xhr.readyState == 4) {
+                    console.log("onload")
+                    if (that.switch) {
+                        f()
+                    } else {
+                        that.funs.push(f);
+                    }
+                }
+            },
+            onload: function(xhr, f) {
+                console.log("onload")
+                if (that.switch) {
+                    f()
+                } else {
+                    that.funs.push(f);
+                }
+            }
+        })
+    }
+    pageEntryHook.prototype.go = function() {
+        this.switch = true;
+        for (var i in this.funs) {
+            this.funs[i]()
+        }
+    }
+    pageEntryHook.prototype.stop = function () {
+      this.switch = false;
+    }
+    var peh = new pageEntryHook()
+    jishiqi = 0;
+    function fun2 () {
+      $.get("api.open.baidu.com").done(function(e) {
+        alert('这是第' + ++jishiqi + '个请求');
+      });
+    }
+  </script>
+
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    <a href="/2017/09/26/xhr拦截及回调挂起方案/">
+    <time datetime="2017-09-26T02:12:43.000Z" class="entry-date">
+        2017-09-26
+    </time>
+</a>
+    
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/js/">js</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+        <span class="nav-previous"><a href="/2017/10/09/高度自动铺满的非js实现/" rel="prev"><span class="meta-nav">←</span> 高度自动铺满的非js实现</a></span>
+    
+    
+        <span class="nav-next"><a href="/2017/09/04/生成器函数/" rel="next">生成器函数 <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Music</h3>
+    <section class="music-player">
+      <main class="music-player--main">
+        <div class="music-player--progress">
+          <progress class="progress--progress-bar" value="0" max="100"></progress>
+          <div class="progress--time progress--time__start">00:00</div>
+          <div class="progress--time progress--time__end">00:00</div>
+        </div>
+        <div class="music-player--controls">
+          <i class="fa fa-pause controls--play-button" data-music="play"></i>
+          
+          <div class="song-info">
+            <div class="song-info--title"></div>
+            <div class="song-info--artist"></div>
+          </div>
+          <div class="controls--actions">
+            <i class="fa fa-backward actions--back"></i>
+            <i class="fa fa-forward actions--forward"></i>
+          </div>
+        </div>
+      </main>
+    </section>
+  </aside>
+
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2017/10/09/高度自动铺满的非js实现/">高度自动铺满的非js实现</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/26/xhr拦截及回调挂起方案/">xhr拦截及回调挂起方案</a>
+          </li>
+        
+          <li>
+            <a href="/2017/09/04/生成器函数/">生成器函数</a>
+          </li>
+        
+          <li>
+            <a href="/2017/08/29/css3选择器大全/">CSS3超实用选择器大全（持续更新中）</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/14/文字截断以及滚动显示/">文字截断以及滚动显示</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS3/">CSS3</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTML5/">HTML5</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频播放/">视频播放</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/CSS3/" style="font-size: 20px;">CSS3</a> <a href="/tags/HTML5/" style="font-size: 20px;">HTML5</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/js/" style="font-size: 20px;">js</a> <a href="/tags/视频播放/" style="font-size: 10px;">视频播放</a>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">兼容性检查</h3>
+    <div class="widget-content inspect">
+      
+    </div>
+    <script>
+            function myConsole(bol,msg,link){
+                let inspect = document.querySelector(".inspect");
+                var div = document.createElement("div");
+                div.style.marginTop = "5px";
+                var p = document.createElement("div");
+                p.innerHTML = msg;
+                p.className = bol ? "blue" : "red";
+                inspect.appendChild(div);
+                div.appendChild(p);
+                p.addEventListener("click",function(){
+                    window.open(link); 
+                });
+            }
+      window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+      myConsole('fetch' in window, "Fetch-获取","https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API");
+            myConsole('serviceWorker' in navigator, "ServiceWorker-服务进程","https://developer.mozilla.org/zh-CN/docs/Web/API/ServiceWorker");
+            myConsole('SharedWorker' in window, "SharedWorker-共享进程","https://developer.mozilla.org/zh-CN/docs/Web/API/SharedWorker");
+            myConsole('Worker' in window , "Worker-进程" ,"https://developer.mozilla.org/zh-CN/docs/Web/API/Worker");
+            myConsole('Crypto' in window , "Crypto-加密","https://developer.mozilla.org/zh-CN/docs/Web/API/Crypto");
+            myConsole(typeof(Map) == "function" , "Map","https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map");
+            myConsole('AudioContext' in window || "webkitAudioContext" in window, "AudioContext-音频环境" ,"https://developer.mozilla.org/zh-CN/docs/Web/API/AudioContext");
+            myConsole('Blob' in window , "Blob-二进制大数据","https://developer.mozilla.org/zh-CN/docs/Web/API/Blob");
+            myConsole('MediaStream' in window ,"MediaStream-媒体流", "https://developer.mozilla.org/zh-CN/docs/Web/API/MediaStream");
+            myConsole("Notification" in window ,"Notification-桌面通知", "https://developer.mozilla.org/zh-CN/docs/Web/API/Notification");
+            myConsole('Promise' in window ,"Promise-容器", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise");
+            myConsole('ondeviceproximity' in window ,"DeviceProximityEvent-设备接近传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceProximityEvent");
+            myConsole('ondevicelight' in window ,"DeviceLightEvent-环境光传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceLightEvent");
+            myConsole('ondevicemotion' in window ,"DeviceMotionEvent-设备运动传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceMotionEvent");
+            myConsole('ondeviceorientation' in window ,"DeviceOrientationEvent-设备方向传感器", "https://developer.mozilla.org/zh-CN/docs/Web/API/DeviceOrientationEvent");
+            myConsole('CustomEvent' in window ,"CustomEvent-自定义事件", "https://developer.mozilla.org/zh-CN/docs/Web/API/CustomEvent");
+            myConsole('GestureEvent' in window ,"GestureEvent-多点触控", "https://developer.mozilla.org/zh-CN/docs/Web/API/GestureEvent");
+            myConsole('Performance' in window ,"Performance-性能", "https://developer.mozilla.org/zh-CN/docs/Web/API/Performance");
+            myConsole('Storage' in window ,"Storage-本地存储", "https://developer.mozilla.org/zh-CN/docs/Web/API/Storage");
+            myConsole('Proxy' in window ,"Proxy-自定义行为", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy");
+      myConsole(window.indexedDB,"indexedDB-前端数据库", "https://developer.mozilla.org/zh-CN/docs/Web/API/IndexedDB_API/Using_IndexedDB");
+            myConsole('TextDecoder' in window,"TextDecoder-文本解码器", "https://developer.mozilla.org/zh-CN/docs/Web/API/TextDecoder");
+            myConsole('TextEncoder' in window,"TextEncoder-文本编码器", "https://developer.mozilla.org/zh-CN/docs/Web/API/TextEncoder");
+            myConsole('createImageBitmap' in window,"createImageBitmap-创建位图", "https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap");
+            myConsole(typeof(Symbol) == "function","Symbol-第七种数据类型", "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol");
+            myConsole('Animation' in window,"Animation-css动画接口", "https://developer.mozilla.org/zh-CN/docs/Web/API/Animation");
+    </script>
+  </aside>
+
+  
+    <aside class="widget">
+  <style>
+    .aqwright{
+      border-bottom: 1px dashed;
+      margin: 10px 0px;
+    }
+    .aqwright>div:first-of-type{
+          display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    }
+  </style>
+  <h3 class="widget-title">留言</h3>
+  <div class="widget-content">
+    <div>
+        <p><input type="text" class="msgname" placeholder="您的姓名"></p>
+        <p><textarea class="msg" style="margin: 0px; width: 100%; height: 206px;"></textarea></p>
+        <p><input type="button" class="msgbtn" value="确定"></p>
+    </div>
+    <div>
+      <div class="xly"></div>
+    </div>
+    <script>
+      document.querySelector(".msgbtn").addEventListener("click", function() {
+        var name = document.querySelector(".msgname").value;
+        var msg = document.querySelector(".msg").value;
+        if (msg == "" || msg == undefined) {
+            alert("请输入您的留言");
+        } else {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                var XMLHttpReq = xhr;
+                if (XMLHttpReq.readyState == 4) {
+                    if (XMLHttpReq.status == 200) {
+                        var text = XMLHttpReq.response;
+                        if (text == "2") {
+                            alert("请输入您的留言");
+                        } else if (text == "3") {
+                            console.log("录入成功");
+                            loadmsg();
+                            document.querySelector(".name").value = "";
+                            document.querySelector(".msg").value = "";
+                        } else {
+                            var cha = parseInt(text / 1000);
+                            alert("请在" + cha + "秒后再留言");
+                        }
+                    }
+                }
+            };
+            xhr.open("POST", "http://www.huangwutao.com/msg", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.responseType = "text";
+            xhr.send("name=" + name + "&msg=" + msg);
+        }
+    });
+    function loadmsg() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var data = JSON.parse(xhr.response);
+                    var thehtml = "";
+                    for (var i = 0; i < data.length; i++) {
+                        thehtml = thehtml + '<div class="aqwright"><div>' + data[i].name + '<span>' + data[i].time + '</span></div><div class="ansright_cont">' + data[i].msg + '</div></div>';
+                    }
+                    document.querySelector(".xly").innerHTML = thehtml;
+                }
+            }
+        };
+        xhr.open("POST", "http://www.huangwutao.com/readmsg", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.responseType = "json";
+        xhr.send();
+    }
+    loadmsg();
+    </script>
+  </div>
+</aside>
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2017 黄武韬
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script src="/js/navigation.js"></script>
+
+<canvas id="sakura" width="310" height="600"></canvas>
+
+<script src="/js/Taoja_new.js"></script>
+        <script type="text/javascript">
+            var tao = new Tao({
+                load : "/js/background.png",
+                name : "myblog_bg",
+                path : 4
+            });
+            tao.result = function(e){
+                if(e.decode){
+                    var js = document.createElement("script");
+                    js.type = "text/javascript";
+                    js.innerHTML = e.dv.get("bg.js").toString();
+                    document.body.appendChild(js);
+                    go(e.dv);
+                    document.body.removeChild(js);
+                }
+            }
+        </script>
+
+  </div>
+</body>
+</html>
